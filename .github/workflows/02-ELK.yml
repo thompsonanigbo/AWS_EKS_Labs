@@ -12,10 +12,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.1.0
 
-      - name: Setup Terraform
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          terraform_version: latest
           
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -28,24 +24,32 @@ jobs:
         run: aws sts get-caller-identity
         
       - name: Terraform Init
-        id: init
-        run: terraform init
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.3
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+          
+    
+      - name: Terraform plan
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.3
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+          
       
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan
-        continue-on-error: true
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform apply
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.14.3
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+          args: '-auto-approve'
+    
 
       - name: Install kubectl
         run: |

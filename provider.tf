@@ -16,18 +16,15 @@ terraform {
     }
 
   }
+backend "s3" {
+    bucket = "primuslearning-app"
+    region = "us-east-1"
+    key = "eks/terraform.tfstate"
+  }
 
-backend "remote" {
-		hostname = "app.terraform.io"
-		organization = "CloudQuickLabs"
-
-		workspaces {
-			name = "AWSEKS"
-		}
-	}
 }
 
-/*
+
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
@@ -40,11 +37,11 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.cluster.token
 
 }
-*/
+
 
 
 provider "aws" {
-  region = "us-west-2"
+  region = "us-west-1"
 }
 
 resource "random_string" "suffix" {

@@ -10,6 +10,8 @@ on:
         - apply
         - destroy
         required: true
+  push:
+    branches: [ "main" ]
 jobs:
   deploy-elkstack:
     runs-on: ubuntu-latest

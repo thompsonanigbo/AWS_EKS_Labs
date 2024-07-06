@@ -17,7 +17,16 @@ jobs:
         with:
           terraform_version: latest
           cli_config_credentials_token: ${{ secrets.TFC_API_TOKEN }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1  # Specify your preferred AWS region
 
+      - name: Verify AWS Credentials
+        run: aws sts get-caller-identity
+        
       - name: Terraform Init
         id: init
         run: terraform init
@@ -38,23 +47,13 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2  # Specify your preferred AWS region
-
-      - name: Verify AWS Credentials
-        run: aws sts get-caller-identity
-
       - name: Install kubectl
         run: |
           sudo apt-get install -y kubectl
 
       - name: Configure kubectl for AWS EKS
         run: |
-          aws eks update-kubeconfig --name module-eks-7V1EN
+          aws eks update-kubeconfig --name "module-eks-${random_string.suffix.result}"
 
       - name: Wait for Resources
         run: sleep 30

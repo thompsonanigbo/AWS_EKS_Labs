@@ -57,10 +57,7 @@ jobs:
 
       - name: Configure kubectl for AWS EKS
         run: |
-          terraform output cluster_name
-          THE_CLUSTER_NAME=$(terraform output cluster_name)
-          echo $THE_CLUSTER_NAME 
-          aws eks update-kubeconfig --name $THE_CLUSTER_NAME
+          aws eks update-kubeconfig --name module-eks-mYH0d
 
       - name: Wait for Resources
         run: sleep 30
